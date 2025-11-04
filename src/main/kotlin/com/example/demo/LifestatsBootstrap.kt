@@ -21,7 +21,7 @@ open class LifestatsBootstrap {
             val logger = LoggerFactory.getLogger(LifestatsBootstrap::class.java)
 
             try {
-                val ctx = SpringApplicationBuilder(LifestatsBootstrap::class.java)
+                SpringApplicationBuilder(LifestatsBootstrap::class.java)
                     .bannerMode(Banner.Mode.OFF)
                     .headless(true)
                     .logStartupInfo(true)
