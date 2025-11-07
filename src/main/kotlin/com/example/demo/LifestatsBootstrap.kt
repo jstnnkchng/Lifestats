@@ -1,5 +1,7 @@
 package com.example.demo
 
+import com.example.demo.config.DaoBeans
+import com.example.demo.config.JdbcDataSourceBeans
 import com.example.demo.controller.CommonController
 import com.example.demo.security.SecurityConfig
 import org.slf4j.LoggerFactory
@@ -28,6 +30,7 @@ open class LifestatsBootstrap {
                     .sources(
                         CommonController::class.java,
                         SecurityConfig::class.java,
+                        DaoBeans::class.java,
                     )
                     .build()
                     .run(*args)

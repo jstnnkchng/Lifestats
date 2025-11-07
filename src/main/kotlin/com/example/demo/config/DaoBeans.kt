@@ -1,0 +1,27 @@
+package com.example.demo.config
+
+import com.example.demo.constants.Qualifiers.JDBC
+import com.example.demo.daos.UsersDao
+import com.example.demo.rowmappers.UserDetailsRowMapper
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import java.util.concurrent.ExecutorService
+
+@Import(JdbcDataSourceBeans::class)
+@Configuration
+class DaoBeans {
+    @Bean
+    open fun usersDao(
+        @Qualifier(JDBC) executorService: ExecutorService,
+        jdbcTemplate: NamedParameterJdbcTemplate,
+        userDetailsRowMapper: UserDetailsRowMapper,
+    ): UsersDao =
+        UsersDao(executorService, jdbcTemplate, userDetailsRowMapper)
+
+    @Bean
+    open fun userDetailsRowMapper(): UserDetailsRowMapper =
+        UserDetailsRowMapper()
+}
