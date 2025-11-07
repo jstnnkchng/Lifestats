@@ -1,12 +1,19 @@
-# Life stats application
+# HelpTgthr application
 ## Description
-Life stats is a social media app where you log things (ideally hobbies) that you do everyday
-some planned features:
-* log hobbies (streaks)
-* unlock unique badges by doing different hobbies
-* show you affinity in a hobby by posting results (i.e. scores in competitive events)
-    * everyone starts at novice level for new hobbies
-* Add friends to keep track of what hobbies they are doing
-* Get suggested new hobbies based on other people with similar hobbies
-* find new firends that have similar hobbies nearby
-* organize events
+HelpTgthr is a social media app where you can quickly find people (for any purpose)
+
+Some example use cases include:
+* Finding people to help moving out of an apartment
+* Finding people to go to a rave
+* Finding people to create a recreational soccer team
+
+## Future plans:
+* User creation
+* Activity / Event creation
+* User Profile customization
+  * activities and experience level
+  * user bio
+* Adding friends
+  * user search
+  * see degree of separation
+* Messaging
