@@ -21,7 +21,7 @@ open class JdbcDataSourceBeans {
     @Bean
     open fun postgresDataSource(env: Environment): DataSource {
         val dataSource = DriverManagerDataSource()
-        dataSource.setDriverClassName(env.getRequiredProperty("spring.datasource.driverClassName"))
+        dataSource.setDriverClassName(env.getRequiredProperty("spring.datasource.driver-class-name"))
         dataSource.setUrl(env.getRequiredProperty("spring.datasource.url"))
         dataSource.setUsername(env.getRequiredProperty("spring.datasource.username"))
         dataSource.setPassword(env.getRequiredProperty("spring.datasource.password"))
@@ -32,23 +32,4 @@ open class JdbcDataSourceBeans {
     open fun jdbcTemplatePostgres(postgresDataSource: DataSource): NamedParameterJdbcTemplate {
         return NamedParameterJdbcTemplate(postgresDataSource)
     }
-
-    @Bean
-    @Qualifier(JDBC)
-    open fun executorService(env: Environment): ExecutorService {
-        val threadCount: Int = env.getRequiredProperty("app.db.thread-pool.size", Int::class.java)
-        val blockingQueueSize: Int = env.getRequiredProperty("app.db.blocking-queue-size", Int::class.java)
-        val threadNameFormat: String = env.getRequiredProperty("app.db.thread-pool-name-format", String::class.java)
-        return ThreadPoolExecutor(
-            threadCount,
-            threadCount,
-            0L,
-            MILLISECONDS,
-            ArrayBlockingQueue(blockingQueueSize),
-            createThreadPoolFactory(threadNameFormat)
-        )
-    }
-
-    private fun createThreadPoolFactory(threadNameFormat: String): ThreadFactory =
-        ThreadFactoryBuilder().setDaemon(true).setNameFormat(threadNameFormat).build()
 }

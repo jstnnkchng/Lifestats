@@ -15,11 +15,11 @@ import java.util.concurrent.ExecutorService
 class DaoBeans {
     @Bean
     open fun usersDao(
-        @Qualifier(JDBC) executorService: ExecutorService,
+        @Qualifier(JDBC) dbPool: ExecutorService,
         jdbcTemplate: NamedParameterJdbcTemplate,
         userDetailsRowMapper: UserDetailsRowMapper,
     ): UsersDao =
-        UsersDao(executorService, jdbcTemplate, userDetailsRowMapper)
+        UsersDao(dbPool, jdbcTemplate, userDetailsRowMapper)
 
     @Bean
     open fun userDetailsRowMapper(): UserDetailsRowMapper =

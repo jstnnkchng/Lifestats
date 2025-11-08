@@ -1,8 +1,11 @@
 package com.example.demo
 
+import com.example.demo.config.ApiRestBeans
 import com.example.demo.config.DaoBeans
+import com.example.demo.config.ExecutorBeans
 import com.example.demo.config.JdbcDataSourceBeans
 import com.example.demo.controller.CommonController
+import com.example.demo.controller.UsersController
 import com.example.demo.security.SecurityConfig
 import org.slf4j.LoggerFactory
 import org.springframework.boot.Banner
@@ -28,10 +31,12 @@ open class LifestatsBootstrap {
                     .headless(true)
                     .logStartupInfo(true)
                     .sources(
+                        ApiRestBeans::class.java,
                         CommonController::class.java,
+                        ExecutorBeans::class.java,
                         SecurityConfig::class.java,
-                        DaoBeans::class.java,
-                    )
+                        UsersController::class.java,
+                        )
                     .build()
                     .run(*args)
             } catch (ex: Exception) {
