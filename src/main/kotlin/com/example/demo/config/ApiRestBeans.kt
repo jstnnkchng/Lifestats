@@ -9,16 +9,12 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import java.util.concurrent.ExecutorService
 
-
 @Import(DaoBeans::class, ExecutorBeans::class)
 @Configuration
 open class ApiRestBeans {
-
     @Bean
     open fun userService(
         @Qualifier(CPU) cpuPool: ExecutorService,
         usersDao: UsersDao,
-    ): UserService =
-        UserService(cpuPool, usersDao)
-
+    ): UserService = UserService(cpuPool, usersDao)
 }

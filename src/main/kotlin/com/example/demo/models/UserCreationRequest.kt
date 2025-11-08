@@ -12,11 +12,11 @@ data class UserCreationRequest(
     val joinDate: LocalDateTime? = null,
 ) {
     init {
-        require(username.isNotBlank()) {"Username cannot be blank"}
-        require(firstName.isNotBlank()) {"First name cannot be blank"}
-        require(lastName.isNotBlank()) {"Last name cannot be blank"}
-        require(email.isNotBlank()) {"Email cannot be blank"}
-        require(phoneNumber.isNotBlank()) {"Phone number cannot be blank"}
-        require(phoneNumber.length == 10 && phoneNumber.all { it.isDigit() }) {"Phone number must be digits"}
+        require(username.isNotBlank()) { "Username cannot be blank" }
+        require(firstName.isNotBlank()) { "First name cannot be blank" }
+        require(lastName.isNotBlank()) { "Last name cannot be blank" }
+        require(email.isNotBlank()) { "Email cannot be blank" }
+        require(phoneNumber.isNotBlank()) { "Phone number cannot be blank" }
+        require(phoneNumber.length == 10 && phoneNumber.all { it.isDigit() }) { "Phone number must be digits" }
     }
 }

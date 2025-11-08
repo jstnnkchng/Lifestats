@@ -18,10 +18,8 @@ class DaoBeans {
         @Qualifier(JDBC) dbPool: ExecutorService,
         jdbcTemplate: NamedParameterJdbcTemplate,
         userDetailsRowMapper: UserDetailsRowMapper,
-    ): UsersDao =
-        UsersDao(dbPool, jdbcTemplate, userDetailsRowMapper)
+    ): UsersDao = UsersDao(dbPool, jdbcTemplate, userDetailsRowMapper)
 
     @Bean
-    open fun userDetailsRowMapper(): UserDetailsRowMapper =
-        UserDetailsRowMapper()
+    open fun userDetailsRowMapper(): UserDetailsRowMapper = UserDetailsRowMapper()
 }

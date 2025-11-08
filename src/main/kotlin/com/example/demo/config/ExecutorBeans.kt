@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 @Configuration
 class ExecutorBeans {
-
     @Bean
     @Qualifier(JDBC)
     open fun dbPool(env: Environment): ExecutorService {
@@ -33,7 +32,10 @@ class ExecutorBeans {
     private fun createThreadPoolFactory(threadNameFormat: String): ThreadFactory =
         ThreadFactoryBuilder().setDaemon(true).setNameFormat(threadNameFormat).build()
 
-    private fun createExecutorService(env: Environment, prefix: String): ThreadPoolExecutor {
+    private fun createExecutorService(
+        env: Environment,
+        prefix: String,
+    ): ThreadPoolExecutor {
         val threadCount: Int = env.getRequiredProperty("$prefix.thread-pool.size", Int::class.java)
         val blockingQueueSize: Int = env.getRequiredProperty("$prefix.thread-pool.blocking-queue-size", Int::class.java)
         val threadNameFormat: String = env.getRequiredProperty("$prefix.thread-pool.executor-name-format", String::class.java)
@@ -43,7 +45,7 @@ class ExecutorBeans {
             0L,
             MILLISECONDS,
             ArrayBlockingQueue(blockingQueueSize),
-            createThreadPoolFactory(threadNameFormat)
+            createThreadPoolFactory(threadNameFormat),
         )
     }
 }

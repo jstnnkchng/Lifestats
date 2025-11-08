@@ -5,7 +5,10 @@ import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
 
 class UserDetailsRowMapper : RowMapper<UserDetails> {
-    override fun mapRow(rs: ResultSet, rowNum: Int): UserDetails? {
+    override fun mapRow(
+        rs: ResultSet,
+        rowNum: Int,
+    ): UserDetails? {
         return UserDetails(
             rs.getInt("user_id"),
             rs.getString("username"),
