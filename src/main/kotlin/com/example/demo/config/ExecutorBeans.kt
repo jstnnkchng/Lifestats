@@ -1,7 +1,7 @@
 package com.example.demo.config
 
-import com.example.demo.constants.Qualifiers.CPU
-import com.example.demo.constants.Qualifiers.JDBC
+import com.example.demo.constants.Constants.CPU
+import com.example.demo.constants.Constants.JDBC
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean

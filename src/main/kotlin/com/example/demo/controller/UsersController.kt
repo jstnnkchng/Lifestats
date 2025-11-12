@@ -1,6 +1,6 @@
 package com.example.demo.controller
 
-import com.example.demo.constants.Qualifiers.CPU
+import com.example.demo.constants.Constants.CPU
 import com.example.demo.models.PaginationResponse
 import com.example.demo.models.UserCreationRequest
 import com.example.demo.models.UserDetails

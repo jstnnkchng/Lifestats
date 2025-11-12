@@ -1,6 +1,6 @@
 package com.example.demo.config
 
-import com.example.demo.constants.Qualifiers.CPU
+import com.example.demo.constants.Constants.CPU
 import com.example.demo.daos.UsersDao
 import com.example.demo.service.UserService
 import org.springframework.beans.factory.annotation.Qualifier
