@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : Neo4jRepository<User, Long> {
     fun findByUsername(username: String): User?
+
     fun findByEmail(email: String): User?
 
     @Query(
