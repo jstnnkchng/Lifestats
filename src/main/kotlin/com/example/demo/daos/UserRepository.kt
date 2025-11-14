@@ -91,33 +91,23 @@ interface UserRepository : Neo4jRepository<User, Long> {
         """
         MATCH (a:User {userId: ${'$'}user_id}), (b:User {userId: $${'$'}target_user_id})
         MERGE (a)-[:CONNECTED_WITH]-(b)
+        RETURN true
     """,
     )
     fun addConnection(
         @Param("user_id") userId: Long,
         @Param("target_user_id") targetUserId: Long,
-    )
+    ): Boolean
 
     @Query(
         """
         MATCH (a:User {userId: ${ '$' }user_id})-[r:CONNECTED_WITH]-(b:User {userId: ${ '$' }target_user_id})
         DELETE r
+        RETURN true
     """,
     )
     fun removeConnection(
         @Param("user_id") userId: Long,
         @Param("target_user_id") targetUserId: Long,
-    )
-
-    @Query(
-        """
-        MATCH (a:User {userId: ${'$'}user_id}), (b:User {userId: ${'$'}target_user_id})
-        MATCH p = shortestPath((a)-[:CONNECTED_TO*]-(b))
-        RETURN length(p) AS degreeOfSeparation
-    """,
-    )
-    fun findDegreeOfSeparation(
-        @Param("user_id") userId: Long,
-        @Param("target_user_id") targetUserId: Long,
-    ): Int?
+    ): Boolean
 }
