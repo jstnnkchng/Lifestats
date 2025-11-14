@@ -1,36 +1,35 @@
 package com.example.demo
 
-import com.example.demo.config.DaoBeans
-import com.example.demo.config.JdbcDataSourceBeans
+import com.example.demo.config.ApiRestBeans
+import com.example.demo.config.ExecutorBeans
 import com.example.demo.controller.CommonController
+import com.example.demo.controller.UsersController
 import com.example.demo.security.SecurityConfig
 import org.slf4j.LoggerFactory
 import org.springframework.boot.Banner
-import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
-import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 @EnableAutoConfiguration
-open class LifestatsBootstrap {
+open class HelpTgthrAPIBootstrap {
     companion object {
-
         @JvmStatic
         fun main(args: Array<String>) {
-            val logger = LoggerFactory.getLogger(LifestatsBootstrap::class.java)
+            val logger = LoggerFactory.getLogger(HelpTgthrAPIBootstrap::class.java)
 
             try {
-                SpringApplicationBuilder(LifestatsBootstrap::class.java)
+                SpringApplicationBuilder(HelpTgthrAPIBootstrap::class.java)
                     .bannerMode(Banner.Mode.OFF)
                     .headless(true)
                     .logStartupInfo(true)
                     .sources(
+                        ApiRestBeans::class.java,
                         CommonController::class.java,
+                        ExecutorBeans::class.java,
                         SecurityConfig::class.java,
-                        DaoBeans::class.java,
+                        UsersController::class.java,
                     )
                     .build()
                     .run(*args)
