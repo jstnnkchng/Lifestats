@@ -2,9 +2,9 @@ package com.example.demo.controller
 
 import com.example.demo.constants.Constants.CPU
 import com.example.demo.models.PaginationResponse
+import com.example.demo.models.User
 import com.example.demo.models.UserCreationRequest
-import com.example.demo.models.UserDetails
-import com.example.demo.models.UserSearchKey
+import com.example.demo.models.UserPartialSearchKey
 import com.example.demo.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -44,11 +44,21 @@ class UsersController(
 
     @GetMapping("/search")
     open fun search(
-        @RequestBody request: UserSearchKey,
-    ): CompletableFuture<ResponseEntity<PaginationResponse<UserDetails>>> {
+        @RequestBody request: UserPartialSearchKey,
+    ): CompletableFuture<ResponseEntity<PaginationResponse<User>>> {
         logger.info("$READ_OPERATION_NAME: $request")
 
         return userService.fetchPaginatedUsers(request)
+            .thenApplyAsync({ ResponseEntity.ok(it) }, executorService)
+    }
+
+    @GetMapping("/searchPartial")
+    open fun searchPartial(
+        @RequestBody request: UserPartialSearchKey,
+    ): CompletableFuture<ResponseEntity<List<User>>> {
+        logger.info("$READ_OPERATION_NAME: $request")
+
+        return userService.openSearchUsers(request)
             .thenApplyAsync({ ResponseEntity.ok(it) }, executorService)
     }
 }

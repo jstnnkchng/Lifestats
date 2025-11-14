@@ -1,6 +1,7 @@
 package com.example.demo.config
 
 import com.example.demo.constants.Constants.CPU
+import com.example.demo.daos.UserRepository
 import com.example.demo.daos.UsersDao
 import com.example.demo.service.UserService
 import org.springframework.beans.factory.annotation.Qualifier
@@ -16,5 +17,6 @@ open class ApiRestBeans {
     open fun userService(
         @Qualifier(CPU) cpuPool: ExecutorService,
         usersDao: UsersDao,
-    ): UserService = UserService(cpuPool, usersDao)
+        userRepository: UserRepository,
+    ): UserService = UserService(cpuPool, usersDao, userRepository)
 }

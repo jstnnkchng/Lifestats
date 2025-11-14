@@ -2,7 +2,6 @@ package com.example.demo.config
 
 import com.example.demo.constants.Constants.JDBC
 import com.example.demo.daos.UsersDao
-import com.example.demo.rowmappers.UserDetailsRowMapper
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,9 +16,5 @@ class DaoBeans {
     open fun usersDao(
         @Qualifier(JDBC) dbPool: ExecutorService,
         jdbcTemplate: NamedParameterJdbcTemplate,
-        userDetailsRowMapper: UserDetailsRowMapper,
-    ): UsersDao = UsersDao(dbPool, jdbcTemplate, userDetailsRowMapper)
-
-    @Bean
-    open fun userDetailsRowMapper(): UserDetailsRowMapper = UserDetailsRowMapper()
+    ): UsersDao = UsersDao(dbPool, jdbcTemplate)
 }

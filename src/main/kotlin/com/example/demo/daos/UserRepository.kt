@@ -14,6 +14,34 @@ interface UserRepository : Neo4jRepository<User, Long> {
 
     @Query(
         """
+        MATCH (u:User)
+        WHERE toLower(u.username) CONTAINS toLower(${ '$' }searchTerm)
+           OR toLower(u.name) CONTAINS toLower(${ '$' }term)
+        RETURN u
+        SKIP ${'$'}offset
+        LIMIT ${'$'}limit
+    """,
+    )
+    fun findUsersByTerm(
+        @Param("searchTerm") searchTerm: String,
+        @Param("offset") offset: Int,
+        @Param("limit") limit: Int,
+    ): List<User>
+
+    @Query(
+        """
+        MATCH (u:User)
+        WHERE toLower(u.username) CONTAINS toLower(${ '$' }searchTerm)
+           OR toLower(u.name) CONTAINS toLower(${ '$' }term)
+        RETURN count(u) AS totalCount
+    """,
+    )
+    fun findUsersCountByTerm(
+        @Param("searchTerm") searchTerm: String,
+    ): Int
+
+    @Query(
+        """
         MATCH (me:User {username: ${'$'}username})
 
         OPTIONAL MATCH (me)-[r:CONNECTED_WITH]-(u:User)
@@ -26,13 +54,15 @@ interface UserRepository : Neo4jRepository<User, Long> {
 
         RETURN u AS user, isConnected
         ORDER BY isConnected DESC, toLower(u.username)
+        SKIP ${'$'}offset
         LIMIT ${'$'}limit
     """,
     )
-    fun findUsersByLikeStringWithFriendPriority(
+    fun findUsersByLikeTermWithFriendPriority(
         @Param("username") username: String,
         @Param("searchTerm") searchTerm: String,
         @Param("limit") limit: Int,
+        @Param("offset") offset: Int,
     ): List<User>
 
     @Query(
