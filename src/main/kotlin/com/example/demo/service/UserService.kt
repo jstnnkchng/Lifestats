@@ -111,54 +111,65 @@ class UserService(
             }
         }
 
-    suspend fun addFriend(userId: Long, targetUserId: Long): Boolean = withContext(Dispatchers.IO) {
-        logger.info("Add friend")
+    suspend fun addFriend(
+        userId: Long,
+        targetUserId: Long,
+    ): Boolean =
+        withContext(Dispatchers.IO) {
+            logger.info("Add friend")
 
-        try{
-            val outgoingConnection = async {
-                userRepository.addConnection(
-                    userId = userId,
-                    targetUserId = targetUserId
-                )
-            }
-            val incomingConnection = async {
-                userRepository.addConnection(
-                    userId = targetUserId,
-                    targetUserId = userId
-                )
-            }
+            try {
+                val outgoingConnection =
+                    async {
+                        userRepository.addConnection(
+                            userId = userId,
+                            targetUserId = targetUserId,
+                        )
+                    }
+                val incomingConnection =
+                    async {
+                        userRepository.addConnection(
+                            userId = targetUserId,
+                            targetUserId = userId,
+                        )
+                    }
 
-            (outgoingConnection.await() && incomingConnection.await())
-        } catch(e: Exception) {
-            logger.error("Error adding friend connection for request: userId $userId, targetUserId $targetUserId")
-            throw RuntimeException("Error adding friend connection", e)
+                (outgoingConnection.await() && incomingConnection.await())
+            } catch (e: Exception) {
+                logger.error("Error adding friend connection for request: userId $userId, targetUserId $targetUserId")
+                throw RuntimeException("Error adding friend connection", e)
+            }
         }
-    }
 
-    suspend fun removeFriend(userId: Long, targetUserId: Long): Boolean = withContext(Dispatchers.IO) {
-        logger.info("Remove friend")
+    suspend fun removeFriend(
+        userId: Long,
+        targetUserId: Long,
+    ): Boolean =
+        withContext(Dispatchers.IO) {
+            logger.info("Remove friend")
 
-        try{
-            val outgoingConnection = async {
-                userRepository.removeConnection(
-                    userId = userId,
-                    targetUserId = targetUserId
-                )
+            try {
+                val outgoingConnection =
+                    async {
+                        userRepository.removeConnection(
+                            userId = userId,
+                            targetUserId = targetUserId,
+                        )
+                    }
+                val incomingConnection =
+                    async {
+                        userRepository.removeConnection(
+                            userId = targetUserId,
+                            targetUserId = userId,
+                        )
+                    }
+
+                (outgoingConnection.await() && incomingConnection.await())
+            } catch (e: Exception) {
+                logger.error("Error removing friend connection for request: userId $userId, targetUserId $targetUserId")
+                throw RuntimeException("Error removing friend connection", e)
             }
-            val incomingConnection = async {
-                userRepository.removeConnection(
-                    userId = targetUserId,
-                    targetUserId = userId
-                )
-            }
-
-            (outgoingConnection.await() && incomingConnection.await())
-        } catch(e: Exception) {
-            logger.error("Error removing friend connection for request: userId $userId, targetUserId $targetUserId")
-            throw RuntimeException("Error removing friend connection", e)
         }
-    }
-
 
     private fun buildPaginatedUserDetails(
         count: Int,
