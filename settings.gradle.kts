@@ -1,1 +1,1 @@
-rootProject.name = "Lifestats"
+rootProject.name = "HelpTgthrAPI"

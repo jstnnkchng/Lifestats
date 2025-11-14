@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @EnableAutoConfiguration
-open class LifestatsBootstrap {
+open class HelpTgthrAPIBootstrap {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val logger = LoggerFactory.getLogger(LifestatsBootstrap::class.java)
+            val logger = LoggerFactory.getLogger(HelpTgthrAPIBootstrap::class.java)
 
             try {
-                SpringApplicationBuilder(LifestatsBootstrap::class.java)
+                SpringApplicationBuilder(HelpTgthrAPIBootstrap::class.java)
                     .bannerMode(Banner.Mode.OFF)
                     .headless(true)
                     .logStartupInfo(true)
