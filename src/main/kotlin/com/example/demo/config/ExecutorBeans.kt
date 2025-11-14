@@ -1,6 +1,5 @@
 package com.example.demo.config
 
-import com.example.demo.constants.Constants.CPU
 import com.example.demo.constants.Constants.JDBC
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import org.springframework.beans.factory.annotation.Qualifier
@@ -20,13 +19,6 @@ class ExecutorBeans {
     open fun dbPool(env: Environment): ExecutorService {
         val prefix = "app.db"
         return createExecutorService(env, prefix)
-    }
-
-    @Bean
-    @Qualifier(CPU)
-    open fun cpuPool(env: Environment): ExecutorService {
-        val cpuPrefix = "app.cpu"
-        return createExecutorService(env, cpuPrefix)
     }
 
     private fun createThreadPoolFactory(threadNameFormat: String): ThreadFactory =

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 data class UserDetails(
-    val userId: Int? = null,
+    val userId: Long? = null,
     val username: String,
     val firstName: String,
     val lastName: String,

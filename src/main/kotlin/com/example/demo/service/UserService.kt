@@ -7,101 +7,116 @@ import com.example.demo.models.PaginationResponse
 import com.example.demo.models.User
 import com.example.demo.models.UserCreationRequest
 import com.example.demo.models.UserPartialSearchKey
+import com.example.demo.models.UserWithDegree
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletableFuture.supplyAsync
-import java.util.concurrent.ExecutorService
 
 class UserService(
-    private val executorService: ExecutorService,
     private val usersDao: UsersDao,
     private val userRepository: UserRepository,
 ) {
     private val logger = LoggerFactory.getLogger(UserService::class.java)
 
-    fun createUser(request: UserCreationRequest): CompletableFuture<Int> {
-        logger.info("Create User")
+    suspend fun createUser(request: UserCreationRequest): Long =
+        withContext(Dispatchers.Default) {
+            logger.info("Create User")
 
-        val inserted = usersDao.insertUser(request.copy(joinDate = LocalDateTime.now()))
+            try {
+                val userIdDeferred =
+                    async {
+                        val userId = usersDao.insertUser(request.copy(joinDate = LocalDateTime.now())).await()
+                        val newUser =
+                            User(
+                                userId = userId,
+                                username = request.username,
+                                firstName = request.firstName,
+                                lastName = request.lastName,
+                                email = request.email,
+                                phoneNumber = request.phoneNumber,
+                                joinDate = LocalDateTime.now(),
+                            )
+                        userRepository.save(newUser)
 
-        // TODO: publish event to trigger insert into Neo4j Users table
-        // for now, insert user into Neo4j
-        val newUser =
-            User(
-                username = request.username,
-                firstName = request.firstName,
-                lastName = request.lastName,
-                email = request.email,
-                phoneNumber = request.phoneNumber,
-                joinDate = LocalDateTime.now(),
-            )
-        userRepository.save(newUser)
+                        userId
+                    }
+                userIdDeferred.await()
+            } catch (e: Exception) {
+                logger.error("Error creating user with request: $request")
+                throw RuntimeException("Error creating user with request", e)
+            }
+        }
 
-        return inserted
-    }
+    suspend fun searchUsersPartial(request: UserPartialSearchKey): List<User> =
+        withContext(Dispatchers.IO) {
+            logger.info("Open Search Users")
 
-    fun openSearchUsers(request: UserPartialSearchKey): CompletableFuture<List<User>> {
-        logger.info("Open Search Users")
+            try {
+                val pageRequest =
+                    PageRequest(
+                        request.pageNumber,
+                        request.pageSize,
+                    )
 
-        val pageRequest =
-            PageRequest(
-                request.pageNumber,
-                request.pageSize,
-            )
-
-        return supplyAsync(
-            {
                 userRepository.findUsersByLikeTermWithFriendPriority(
                     username = request.username,
                     searchTerm = request.term,
                     offset = pageRequest.offset,
                     limit = pageRequest.limit,
                 )
-            },
-            executorService,
-        )
-    }
+            } catch (e: Exception) {
+                logger.error("Error during search users partial with request: $request")
+                throw RuntimeException("Error during search users partial", e)
+            }
+        }
 
-    fun fetchPaginatedUsers(request: UserPartialSearchKey): CompletableFuture<PaginationResponse<User>> {
-        logger.info("Search Paginated Users")
+    suspend fun fetchPaginatedUsers(request: UserPartialSearchKey): PaginationResponse<UserWithDegree> =
+        withContext(Dispatchers.IO) {
+            logger.info("Search Paginated Users")
 
-        val pageRequest =
-            PageRequest(
-                request.pageNumber,
-                request.pageSize,
-            )
+            try {
+                val pageRequest =
+                    PageRequest(
+                        request.pageNumber,
+                        request.pageSize,
+                    )
 
-        return supplyAsync {
-            userRepository.findUsersByTerm(
-                searchTerm = request.term,
-                offset = pageRequest.offset,
-                limit = pageRequest.limit,
-            )
-        }.thenApplyAsync({
-                userList ->
-            buildPaginatedUserDetails(
-                count = userRepository.findUsersCountByTerm(request.term),
-                pageNumber = request.pageNumber,
-                pageSize = request.pageSize,
-                userList,
-            )
-        }, executorService)
-            .exceptionallyAsync(
-                { ex ->
-                    logger.error("Error fetching paginated users")
-                    throw RuntimeException("Error fetching paginated users", ex)
-                },
-                executorService,
-            )
-    }
+                val usersDeferred =
+                    async {
+                        userRepository.findUsersByTerm(
+                            userId = request.userId,
+                            searchTerm = request.term,
+                            offset = pageRequest.offset,
+                            limit = pageRequest.limit,
+                        )
+                    }
+
+                val usersCountDeferred =
+                    async {
+                        userRepository.findUsersCountByTerm(request.term)
+                    }
+
+                buildPaginatedUserDetails(
+                    count = usersCountDeferred.await(),
+                    pageNumber = request.pageNumber,
+                    pageSize = request.pageSize,
+                    records = usersDeferred.await(),
+                )
+            } catch (e: Exception) {
+                logger.error("Error fetching paginated users with request: $request")
+                throw RuntimeException("Error fetching paginated users", e)
+            }
+        }
 
     private fun buildPaginatedUserDetails(
         count: Int,
         pageNumber: Int,
         pageSize: Int,
-        records: List<User>,
-    ): PaginationResponse<User> {
+        records: List<UserWithDegree>,
+    ): PaginationResponse<UserWithDegree> {
         val totalRecords = count
         val currentPage = pageNumber
         val last = currentPage == totalRecords / pageSize

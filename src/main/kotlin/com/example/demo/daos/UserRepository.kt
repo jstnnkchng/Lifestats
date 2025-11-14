@@ -1,6 +1,7 @@
 package com.example.demo.daos
 
 import com.example.demo.models.User
+import com.example.demo.models.UserWithDegree
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.repository.query.Param
@@ -14,30 +15,41 @@ interface UserRepository : Neo4jRepository<User, Long> {
 
     @Query(
         """
+        MATCH (root:User {id: ${'$'}user_id})
+
         MATCH (u:User)
-        WHERE toLower(u.username) CONTAINS toLower(${ '$' }searchTerm)
-           OR toLower(u.name) CONTAINS toLower(${ '$' }term)
-        RETURN u
+        WHERE toLower(u.username) CONTAINS toLower(${'$'}search_term)
+           OR toLower(u.name) CONTAINS toLower(${'$'}search_term)
+
+        OPTIONAL MATCH path = shortestPath((root)-[*..4]-(u))
+
+        RETURN
+            u,
+            CASE
+                WHEN path IS NULL THEN -1
+                ELSE length(path)
+            END AS degree
         SKIP ${'$'}offset
         LIMIT ${'$'}limit
     """,
     )
     fun findUsersByTerm(
-        @Param("searchTerm") searchTerm: String,
+        @Param("user_id") userId: Long,
+        @Param("search_term") searchTerm: String,
         @Param("offset") offset: Int,
         @Param("limit") limit: Int,
-    ): List<User>
+    ): List<UserWithDegree>
 
     @Query(
         """
         MATCH (u:User)
-        WHERE toLower(u.username) CONTAINS toLower(${ '$' }searchTerm)
-           OR toLower(u.name) CONTAINS toLower(${ '$' }term)
+        WHERE toLower(u.username) CONTAINS toLower(${ '$' }search_term)
+           OR toLower(u.name) CONTAINS toLower(${ '$' }search_term)
         RETURN count(u) AS totalCount
     """,
     )
     fun findUsersCountByTerm(
-        @Param("searchTerm") searchTerm: String,
+        @Param("search_term") searchTerm: String,
     ): Int
 
     @Query(
@@ -45,7 +57,7 @@ interface UserRepository : Neo4jRepository<User, Long> {
         MATCH (me:User {username: ${'$'}username})
 
         OPTIONAL MATCH (me)-[r:CONNECTED_WITH]-(u:User)
-        WHERE toLower(u.username) CONTAINS toLower(${'$'}searchTerm)
+        WHERE toLower(u.username) CONTAINS toLower(${'$'}search_term)
         WITH u,
              CASE
                 WHEN r IS NOT NULL THEN 1  // directly connected
@@ -60,40 +72,52 @@ interface UserRepository : Neo4jRepository<User, Long> {
     )
     fun findUsersByLikeTermWithFriendPriority(
         @Param("username") username: String,
-        @Param("searchTerm") searchTerm: String,
+        @Param("search_term") searchTerm: String,
         @Param("limit") limit: Int,
         @Param("offset") offset: Int,
     ): List<User>
 
     @Query(
         """
-        MATCH (a:User {userId: ${ '$' }userId})-[:CONNECTED_WITH]-(b:User)
+        MATCH (a:User {userId: ${ '$' }user_id})-[:CONNECTED_WITH]-(b:User)
         RETURN b
     """,
     )
     fun findConnections(
-        @Param("userId") userId: Long,
+        @Param("user_id") userId: Long,
     ): List<User>
 
     @Query(
         """
-        MATCH (a:User {userId: ${'$'}userId}), (b:User {userId: $${'$'}otherUserId})
+        MATCH (a:User {userId: ${'$'}user_id}), (b:User {userId: $${'$'}target_user_id})
         MERGE (a)-[:CONNECTED_WITH]-(b)
     """,
     )
     fun addConnection(
-        @Param("userId") userId: Long,
-        @Param("otherUserId") otherUserId: Long,
+        @Param("user_id") userId: Long,
+        @Param("target_user_id") targetUserId: Long,
     )
 
     @Query(
         """
-        MATCH (a:User {userId: ${ '$' }userId})-[r:CONNECTED_WITH]-(b:User {userId: ${ '$' }otherId})
+        MATCH (a:User {userId: ${ '$' }user_id})-[r:CONNECTED_WITH]-(b:User {userId: ${ '$' }target_user_id})
         DELETE r
     """,
     )
     fun removeConnection(
-        @Param("userId") userId: Long,
-        @Param("otherId") otherId: Long,
+        @Param("user_id") userId: Long,
+        @Param("target_user_id") targetUserId: Long,
     )
+
+    @Query(
+        """
+        MATCH (a:User {userId: ${'$'}user_id}), (b:User {userId: ${'$'}target_user_id})
+        MATCH p = shortestPath((a)-[:CONNECTED_TO*]-(b))
+        RETURN length(p) AS degreeOfSeparation
+    """,
+    )
+    fun findDegreeOfSeparation(
+        @Param("user_id") userId: Long,
+        @Param("target_user_id") targetUserId: Long,
+    ): Int?
 }

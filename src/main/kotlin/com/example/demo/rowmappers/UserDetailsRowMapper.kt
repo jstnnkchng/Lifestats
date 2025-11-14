@@ -10,7 +10,7 @@ class UserDetailsRowMapper : RowMapper<UserDetails> {
         rowNum: Int,
     ): UserDetails? {
         return UserDetails(
-            rs.getInt("user_id"),
+            rs.getLong("user_id"),
             rs.getString("username"),
             rs.getString("first_name"),
             rs.getString("last_name"),

@@ -22,7 +22,7 @@ class UsersDao(
         private val DELETE_OPERATION_NAME = "deleteUser"
     }
 
-    fun insertUser(request: UserCreationRequest): CompletableFuture<Int> {
+    fun insertUser(request: UserCreationRequest): CompletableFuture<Long> {
         LOGGER.info(CREATE_OPERATION_NAME)
 
         val sql =
@@ -44,6 +44,7 @@ class UsersDao(
             :bio,
             :join_date
             )
+            RETURNING user_id
             """.trimIndent()
 
         val namedParameters =
@@ -61,7 +62,7 @@ class UsersDao(
                 jdbcTemplate.queryForObject(
                     sql,
                     namedParameters,
-                    Int::class.java,
+                    Long::class.java,
                 )
             },
             executorService,

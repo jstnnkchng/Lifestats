@@ -1,6 +1,7 @@
 package com.example.demo.models
 
 data class UserPartialSearchKey(
+    val userId: Long,
     val pageNumber: Int,
     val pageSize: Int,
     val term: String,
