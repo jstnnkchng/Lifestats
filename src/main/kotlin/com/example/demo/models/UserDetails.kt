@@ -1,5 +1,6 @@
 package com.example.demo.models
 
+import com.example.demo.constants.Constants.JSON_DATE_PATTERN
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
@@ -11,6 +12,6 @@ data class UserDetails(
     val email: String,
     val phoneNumber: String,
     val bio: String?,
-    @JsonFormat(pattern = "MM-dd-yyyy HH:mm:ss")
+    @JsonFormat(pattern = JSON_DATE_PATTERN)
     val joinDate: LocalDateTime,
 )

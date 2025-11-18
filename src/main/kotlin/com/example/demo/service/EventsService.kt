@@ -18,7 +18,7 @@ class EventsService(
             logger.info("Create Event")
 
             try {
-                val eventIdDeferred = eventsDao.insertEvent(request.copy(createdAt = LocalDateTime.now()))
+                val eventIdDeferred = eventsDao.insertEvent(request.copy(currentParticipants = 0, createdAt = LocalDateTime.now()))
 
                 eventIdDeferred.await()
             } catch (e: Exception) {

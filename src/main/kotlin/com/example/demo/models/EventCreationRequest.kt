@@ -1,6 +1,8 @@
 package com.example.demo.models
 
+import com.example.demo.constants.Constants.JSON_DATE_PATTERN
 import com.example.demo.constants.VisibilityType
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 data class EventCreationRequest(
@@ -9,9 +11,11 @@ data class EventCreationRequest(
     val eventName: String,
     val eventDescription: String,
     val location: String,
+    @JsonFormat(pattern = JSON_DATE_PATTERN)
     val eventTime: LocalDateTime,
-    val maxNumParticipants: Int?,
-    val visiblity: VisibilityType,
+    val currentParticipants: Int? = null,
+    val maxNumParticipants: Int? = null,
+    val visibility: VisibilityType,
     val createdAt: LocalDateTime? = null,
 ) {
     init {

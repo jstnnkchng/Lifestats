@@ -1,6 +1,7 @@
 package com.example.demo.models
 
 import com.example.demo.constants.Constants.CONNECTED_WITH
+import com.example.demo.constants.Constants.JSON_DATE_PATTERN
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
@@ -19,6 +20,6 @@ data class User(
     val bio: String? = null,
     @Relationship(type = CONNECTED_WITH, direction = Relationship.Direction.OUTGOING)
     val friends: MutableSet<User> = mutableSetOf(),
-    @JsonFormat(pattern = "MM-dd-yyyy HH:mm:ss")
+    @JsonFormat(pattern = JSON_DATE_PATTERN)
     val joinDate: LocalDateTime,
 )
