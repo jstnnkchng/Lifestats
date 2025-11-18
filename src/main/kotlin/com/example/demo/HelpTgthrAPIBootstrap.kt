@@ -3,6 +3,7 @@ package com.example.demo
 import com.example.demo.config.ApiRestBeans
 import com.example.demo.config.ExecutorBeans
 import com.example.demo.controller.CommonController
+import com.example.demo.controller.EventsController
 import com.example.demo.controller.UsersController
 import com.example.demo.security.SecurityConfig
 import org.slf4j.LoggerFactory
@@ -27,6 +28,7 @@ open class HelpTgthrAPIBootstrap {
                     .sources(
                         ApiRestBeans::class.java,
                         CommonController::class.java,
+                        EventsController::class.java,
                         ExecutorBeans::class.java,
                         SecurityConfig::class.java,
                         UsersController::class.java,

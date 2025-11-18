@@ -1,6 +1,7 @@
 package com.example.demo.config
 
 import com.example.demo.constants.Constants.JDBC
+import com.example.demo.daos.EventsDao
 import com.example.demo.daos.UsersDao
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
@@ -17,4 +18,10 @@ class DaoBeans {
         @Qualifier(JDBC) dbPool: ExecutorService,
         jdbcTemplate: NamedParameterJdbcTemplate,
     ): UsersDao = UsersDao(dbPool, jdbcTemplate)
+
+    @Bean
+    open fun eventsDao(
+        @Qualifier(JDBC) dbPool: ExecutorService,
+        jdbcTemplate: NamedParameterJdbcTemplate,
+    ): EventsDao = EventsDao(dbPool, jdbcTemplate)
 }
