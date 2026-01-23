@@ -2,7 +2,7 @@ package com.example.demo.daos
 
 import com.example.demo.models.User
 import com.example.demo.models.UserWithDegree
-import org.springframework.data.jdbc.repository.query.Query
+import org.springframework.data.neo4j.repository.query.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
